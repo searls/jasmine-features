@@ -10,5 +10,5 @@ gem 'capybara'
 
 gem 'sinatra'
 
-gem 'js_rake_tasks'
+gem 'js_rake_tasks', '0.0.2'
 gem 'rake'

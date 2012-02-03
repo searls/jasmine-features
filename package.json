@@ -5,8 +5,8 @@
   "keywords": [
     "jasmine",
     "bdd",
-	"atdd"
-	"jasmine-feature"
+  	"atdd",
+  	"jasmine-feature"
   ],
   "dependencies": {
     "https://github.com/pivotal/jasmine": "Any"
