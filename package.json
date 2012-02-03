@@ -1,0 +1,35 @@
+{
+  "name": "jasmine-features",
+  "description": "Functional testing with Jasmine",
+  "version": "0.0.1",
+  "keywords": [
+    "jasmine",
+    "bdd",
+	"atdd"
+	"jasmine-feature"
+  ],
+  "dependencies": {
+    "https://github.com/pivotal/jasmine": "Any"
+  },
+  "bugs": {
+    "web": "https://github.com/searls/jasmine-features/issues"
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/searls/jasmine-features.git"
+    }
+  ],
+  "licenses": [
+    {
+      "name": "Apache License 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "homepage": "https://github.com/searls/jasmine-features",
+  "maintainers":[ {
+     "name": "Justin Searls",
+     "email": "searls@gmail.com",
+     "web": "http://about.me/searls"
+  }]
+}
