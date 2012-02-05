@@ -8,7 +8,11 @@ gem 'cucumber'
 gem 'rspec'
 gem 'capybara'
 
+gem 'coffee-script'
+gem 'execjs'
+
 gem 'sinatra'
+gem 'shotgun'
 
 gem 'js_rake_tasks', '0.0.2'
 gem 'rake'
