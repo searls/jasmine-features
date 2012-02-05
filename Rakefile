@@ -15,5 +15,5 @@ CLEAN << "dist"
 Jasmine::Headless::Task.new
 Cucumber::Rake::Task.new
 
-task :default => ['jasmine:headless', 'cucumber', 'coffee:compile']
+task :default => ['jasmine:headless', 'coffee:compile', 'cucumber']
 

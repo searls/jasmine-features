@@ -97,6 +97,7 @@ PLATFORMS
 
 DEPENDENCIES
   capybara
+  childprocess
   coffee-script
   cucumber
   execjs

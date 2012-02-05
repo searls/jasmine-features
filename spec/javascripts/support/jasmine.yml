@@ -1,4 +1,5 @@
 src_files:
+  - "public/vendor/**/*.{js,coffee}"
   - "src/**/*.{js,coffee}"
 
 stylesheets:

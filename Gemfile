@@ -7,6 +7,7 @@ gem 'ruby-debug19'
 gem 'cucumber'
 gem 'rspec'
 gem 'capybara'
+gem 'childprocess'
 
 gem 'coffee-script'
 gem 'execjs'
