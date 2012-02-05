@@ -5,9 +5,15 @@
     <script type="text/javascript" src="vendor/js/underscore-min.js"></script>
 
     <script type="text/javascript" src="app/js/app.js"></script>
+
+    <% unless ENV['RACK_ENV'] == "production" %>
+      <script type="text/javascript" src="features/support/jasmine.js"></script>
+      <script type="text/javascript" src="features/support/jquery.simulate.js"></script>
+      <script type="text/javascript" src="features/support/jasmine-features.js"></script>
+
+    <% end %>
   </head>
 
   <body>
-    <%= "hi" %>
   </body>
 </html>
