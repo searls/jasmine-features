@@ -1,7 +1,6 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    archive-tar-minitar (0.5.2)
     builder (3.0.0)
     capybara (1.1.2)
       mime-types (>= 1.16)
@@ -16,7 +15,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.1.2)
-    columnize (0.3.6)
     cucumber (1.1.4)
       builder (>= 2.1.2)
       diff-lcs (>= 1.1.2)
@@ -42,8 +40,6 @@ GEM
       semver (~> 1.0.1)
     json (1.6.5)
     json_pure (1.6.5)
-    linecache19 (0.5.12)
-      ruby_core_source (>= 0.1.4)
     mime-types (1.17.2)
     multi_json (1.0.3)
     nokogiri (1.5.0)
@@ -64,16 +60,6 @@ GEM
     rspec-expectations (2.8.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.8.0)
-    ruby-debug-base19 (0.11.25)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby_core_source (>= 0.1.4)
-    ruby-debug19 (0.11.6)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby-debug-base19 (>= 0.11.19)
-    ruby_core_source (0.1.5)
-      archive-tar-minitar (>= 0.5.2)
     rubyzip (0.9.5)
     selenium-webdriver (2.12.1)
       childprocess (>= 0.2.1)
@@ -106,6 +92,5 @@ DEPENDENCIES
   rack-coffee
   rake
   rspec
-  ruby-debug19
   shotgun
   sinatra
