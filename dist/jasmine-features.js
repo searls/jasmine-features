@@ -1,3 +1,12 @@
+
+/*
+jasmine-features 0.0.1
+
+A toolkit for writing functional/integrated tests with Jasmine in JavaScript
+
+site: https://github.com/searls/jasmine-features
+*/
+
 (function() {
   var buildErrors, buildResults,
     __hasProp = Object.prototype.hasOwnProperty,
