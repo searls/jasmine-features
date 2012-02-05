@@ -10,6 +10,7 @@ gem 'capybara'
 
 gem 'coffee-script'
 gem 'execjs'
+gem 'rack-coffee'
 
 gem 'sinatra'
 gem 'shotgun'

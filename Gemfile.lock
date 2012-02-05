@@ -48,6 +48,8 @@ GEM
     multi_json (1.0.3)
     nokogiri (1.5.0)
     rack (1.4.1)
+    rack-coffee (0.9.1)
+      rack
     rack-protection (1.2.0)
       rack
     rack-test (0.6.1)
@@ -100,6 +102,7 @@ DEPENDENCIES
   execjs
   jasmine-headless-webkit
   js_rake_tasks (= 0.0.2)
+  rack-coffee
   rake
   rspec
   ruby-debug19

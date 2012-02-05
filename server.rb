@@ -1,5 +1,9 @@
 require 'sinatra'
 
-get '/' do
-  erb :index
+class Server < Sinatra::Application
+
+  get '/' do
+    erb :index
+  end
+
 end
