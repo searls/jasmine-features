@@ -2,8 +2,6 @@ source :rubygems
 
 gem 'jasmine-headless-webkit'
 
-gem 'ruby-debug19'
-
 gem 'cucumber'
 gem 'rspec'
 gem 'capybara'
