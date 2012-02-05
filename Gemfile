@@ -14,5 +14,5 @@ gem 'rack-coffee'
 gem 'sinatra'
 gem 'shotgun'
 
-gem 'js_rake_tasks', :path => '/Users/justin/code/ruby/js_rake_tasks'
+gem 'js_rake_tasks'
 gem 'rake'

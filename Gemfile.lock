@@ -1,11 +1,3 @@
-PATH
-  remote: /Users/justin/code/ruby/js_rake_tasks
-  specs:
-    js_rake_tasks (0.0.2)
-      git (~> 1.2.5)
-      json_pure (~> 1.6.1)
-      semver (~> 1.0.1)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -42,6 +34,10 @@ GEM
       jasmine-core (~> 1.1.beta)
       multi_json
       rainbow
+    js_rake_tasks (0.0.3)
+      git (~> 1.2.5)
+      json_pure (~> 1.6.1)
+      semver (~> 1.0.1)
     json (1.6.5)
     json_pure (1.6.5)
     mime-types (1.17.2)
@@ -92,7 +88,7 @@ DEPENDENCIES
   cucumber
   execjs
   jasmine-headless-webkit
-  js_rake_tasks!
+  js_rake_tasks
   rack-coffee
   rake
   rspec
