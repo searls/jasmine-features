@@ -57,17 +57,18 @@ describe "jasmine.features.run", ->
       Given -> @superfluousMessage = "I don't matter"
       Given -> @realErrorMessage = "I do matter"
       Given -> spyOn(console, "log") #this may asplode in some browsers.. :-/
+      Given -> @$results = $('#jasmine_features_results')
 
       context "passing", ->
         Given -> spyOn(@reporter, "results").andReturn [
           {result: "passed", messages:[ toString: (=> @superfluousMessage), passed: (-> true) ]}
         ]
         When -> @reporter.reportRunnerResults()
-        Then -> $('#jasmine_features_results').hasClass('finished')
-        Then -> $('#jasmine_features_results').hasClass('passed')
-        Then -> expect($('#jasmine_features_results').text()).toContain("Results: 1 passed, 0 failed")
+        Then -> @$results.hasClass('finished')
+        Then -> @$results.hasClass('passed')
+        Then -> expect(@$results.text()).toContain("Results: 1 passed, 0 failed")
         Then -> expect(console.log).toHaveBeenCalledWith("Results: 1 passed, 0 failed",jasmine.any(Object),@reporter.results())
-        Then -> expect($('#jasmine_features_results pre').text()).not.toContain(@superfluousMessage)
+        Then -> expect(@$results.text()).not.toContain(@superfluousMessage)
 
       context "failing", ->
         Given -> spyOn(@reporter, "results").andReturn [
@@ -76,13 +77,13 @@ describe "jasmine.features.run", ->
           {result: "failed", messages:[ {toString: (=> @realErrorMessage+"2"), passed: (-> false)} ]}
         ]
         When -> @reporter.reportRunnerResults()
-        Then -> $('#jasmine_features_results').hasClass('finished')
-        Then -> !$('#jasmine_features_results').hasClass('passed')
-        Then -> expect($('#jasmine_features_results').text()).toContain("Results: 1 passed, 2 failed")
+        Then -> @$results.hasClass('finished')
+        Then -> !@$results.hasClass('passed')
+        Then -> expect(@$results.text()).toContain("Results: 1 passed, 2 failed")
         Then -> expect(console.log).toHaveBeenCalledWith("Results: 1 passed, 2 failed",jasmine.any(Object),@reporter.results())
-        Then -> expect($('#jasmine_features_results pre').text()).not.toContain(@superfluousMessage)
-        Then -> expect($('#jasmine_features_results pre').text()).toContain(@realErrorMessage)
-        Then -> expect($('#jasmine_features_results pre').text()).toContain(@realErrorMessage+"2")
+        Then -> expect(@$results.text()).toContain(@realErrorMessage)
+        Then -> expect(@$results.text()).not.toContain(@superfluousMessage)
+        Then -> expect(@$results.text()).toContain(@realErrorMessage+"2")
 
 
 
