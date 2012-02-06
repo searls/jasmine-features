@@ -3,12 +3,12 @@
   <head>
     <script type="text/javascript" src="vendor/js/jquery.min.js"></script>
     <script type="text/javascript" src="vendor/js/underscore-min.js"></script>
+    <script type="text/javascript" src="vendor/js/jquery-1.6.4-noconflict.min.js"></script>
 
     <script type="text/javascript" src="app/js/app.js"></script>
 
     <% unless ENV['RACK_ENV'] == "production" %>
       <script type="text/javascript" src="features/support/jasmine.js"></script>
-      <script type="text/javascript" src="features/support/jquery.simulate.js"></script>
       <script type="text/javascript" src="features/support/dist/jasmine-features.js"></script>
 
       <script type="text/javascript" src="features/support/helpers/jasmine-given-0.0.6.js"></script>
