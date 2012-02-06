@@ -1,6 +1,7 @@
 beforeEach ->
   this.addMatchers
     toBeAttached: (within = 'body') ->
+      $ = jasmine.features.$
       $el = $(this.actual)
       $within = $(within)
       isContainedWithin = $.contains($within[0],$el[0])

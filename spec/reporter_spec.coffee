@@ -13,6 +13,8 @@ describe "jasmine.features.run", ->
   afterEach -> $('#jasmine_features_results').remove()
   afterEach -> jasmine.features.queue = []
 
+  Given -> jasmine.features.$ = $
+
   Given -> @fakeEnv =
     execute: jasmine.createSpy()
     reporter:

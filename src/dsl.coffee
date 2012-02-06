@@ -1,6 +1,6 @@
 jasmine ||= {}
 jasmine.features ||= {}
-jasmine.features.dsl = ->
+jasmine.features.addDsl = ($) ->
   o$ = $
 
   find = (nameOrSelector,type=":input") ->
@@ -38,7 +38,6 @@ jasmine.features.dsl = ->
       $from.simulate 'drag',
         dx: $to.offset().left - $from.offset().left
         dy: $to.offset().top - $from.offset().top
-  dsl
 
-#globalization
-_(window).extend(jasmine.features.dsl())
+  _(window).extend(dsl)
+  dsl

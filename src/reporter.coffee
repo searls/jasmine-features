@@ -14,6 +14,7 @@ jasmine.features.Feature = (name,suite) ->
   (jasmine.features.queue ||= []).push(name: name, suite: suite)
 
 jasmine.features.run = (jasmine=jasmine) ->
+  $ = jasmine.features.$
   $results = $('#jasmine_features_results')
   if $results.length == 0
     $results = $('<div id="jasmine_features_results"></div>').appendTo('body')
@@ -34,8 +35,6 @@ jasmine.features.run = (jasmine=jasmine) ->
   jasmine.getEnv().reporter.subReporters_ = [reporter]
   jasmine.getEnv().execute()
   reporter
-
-
 
 buildResults = (results) ->
   _({passed:0,failed:0}).chain().

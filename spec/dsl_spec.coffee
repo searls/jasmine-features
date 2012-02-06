@@ -1,5 +1,6 @@
 describe "jasmine.features.dsl", ->
-  Given -> @subject = jasmine.features.dsl()
+  Given -> jasmine.features.using(jQuery: $)
+  Given -> @subject = jasmine.features.addDsl($)
 
   describe ".within", ->
     Given -> affix('.panda').affix('a.secret.win').on('click',@winSpy = jasmine.createSpy())
