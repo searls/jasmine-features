@@ -330,7 +330,7 @@ site: https://github.com/searls/jasmine-features
         $within = $(within);
         isContainedWithin = $.contains($within[0], $el[0]);
         this.message = function() {
-          return "Expected '" + $el.selector + "' to be contained within '" + $within.selector + "'";
+          return "Expected '" + $el.selector + "' " + (this.isNot("not") ? void 0 : "") + " to be contained within '" + $within.selector + "'";
         };
         return isContainedWithin;
       }
@@ -420,11 +420,10 @@ site: https://github.com/searls/jasmine-features
   jasmine.features || (jasmine.features = {});
 
   jasmine.features.using = function(config) {
-    if (config == null) {
-      config = {
-        jQuery: $
-      };
-    }
+    if (config == null) config = {};
+    config = _({
+      jQuery: $
+    }).extend(config);
     jasmine.features.$ = config.jQuery;
     jasmine.features.addDsl(jasmine.features.$);
     if (jasmine.features.$.fn.simulate == null) {
