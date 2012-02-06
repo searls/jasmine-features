@@ -13,17 +13,17 @@ class jasmine.features.FeatureReporter extends jasmine.JsApiReporter
 jasmine.features.Feature = (name,suite) ->
   (jasmine.features.queue ||= []).push(name: name, suite: suite)
 
-jasmine.features.run = (jasmine=jasmine) ->
-  $ = jasmine.features.$
+jasmine.features.run = (jazmine=jasmine) ->
+  $ = jazmine.features.$
   $results = $('#jasmine_features_results')
   if $results.length == 0
     $results = $('<div id="jasmine_features_results"></div>').appendTo('body')
   $results.removeClass()
 
-  _(jasmine.features.queue).each (feature) ->
+  _(jazmine.features.queue).each (feature) ->
     describe(feature.name,feature.suite)
 
-  reporter = new jasmine.features.FeatureReporter (reporter) ->
+  reporter = new jazmine.features.FeatureReporter (reporter) ->
     results = buildResults(reporter.results())
     $('#jasmine_features_results').
       html(results.message).
@@ -32,8 +32,8 @@ jasmine.features.run = (jasmine=jasmine) ->
       append("<pre>#{results.errors}</pre>")
     console?.log?(results.message, results, reporter.results())
 
-  jasmine.getEnv().reporter.subReporters_ = [reporter]
-  jasmine.getEnv().execute()
+  jazmine.getEnv().reporter.subReporters_ = [reporter]
+  jazmine.getEnv().execute()
   reporter
 
 buildResults = (results) ->
