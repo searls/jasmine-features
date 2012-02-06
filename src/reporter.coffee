@@ -13,9 +13,11 @@ class jasmine.features.FeatureReporter extends jasmine.JsApiReporter
 jasmine.features.Feature = (name,suite) ->
   (jasmine.features.queue ||= []).push(name: name, suite: suite)
 
-jasmine.features.run = () ->
-  if $('#jasmine_features_results').length == 0
-    $('<div id="jasmine_features_results"></div>').appendTo('body').removeClass()
+jasmine.features.run = (jasmine=jasmine) ->
+  $results = $('#jasmine_features_results')
+  if $results.length == 0
+    $results = $('<div id="jasmine_features_results"></div>').appendTo('body')
+  $results.removeClass()
 
   _(jasmine.features.queue).each (feature) ->
     describe(feature.name,feature.suite)
