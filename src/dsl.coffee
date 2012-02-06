@@ -35,18 +35,9 @@ jasmine.features.dsl = ->
       $from = o$(selector)
       $to = o$(options.to)
 
-      delta = _({dx: 0, dy: 0}).chain().
-      tap((delta) ->
-        offset = $from.offset()
-        delta.dx -= offset.left
-        delta.dy -= offset.top
-      ).tap( (delta) ->
-        offset = $to.offset()
-        delta.dx += offset.left
-        delta.dy += offset.top
-      ).value()
-
-      $from.simulate('drag', delta)
+      $from.simulate 'drag',
+        dx: $to.offset().left - $from.offset().left
+        dy: $to.offset().top - $from.offset().top
   dsl
 
 #globalization
