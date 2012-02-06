@@ -5,6 +5,7 @@ gem 'jasmine-headless-webkit'
 gem 'cucumber'
 gem 'rspec'
 gem 'capybara'
+gem "capybara-webkit"
 gem 'childprocess'
 
 gem 'coffee-script'
