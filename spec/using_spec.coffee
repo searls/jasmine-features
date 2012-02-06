@@ -17,7 +17,7 @@ describe "jasmine.features.using", ->
     Then -> expect(jasmine.features.addDsl).toHaveBeenCalledWith(jasmine.features.$)
 
   describe "adds $.fn.simulate", ->
-    context "simulate isn't defined", ->
+    context "simulate is not defined", ->
       When -> jasmine.features.using(jQuery: fakeJquery())
       Then -> expect($.fn.simulate).toBeDefined()
 
