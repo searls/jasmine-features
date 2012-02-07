@@ -1,9 +1,12 @@
 describe "jasmine.features.dsl", ->
   Given -> jasmine.features.using(jQuery: $)
+  
+  #This let's us set up expectations of the dsl's expectations with didExpect()
   Given -> @fakeMatchers = jasmine.createSpyObj('matchers',['toBeAttached','toEqual', 'toBe'])
   Given -> @fakeExpect = jasmine.createSpy().andReturn(@fakeMatchers)
+  didExpect=null
   Given ->
-    @expected = (actual) => 
+    didExpect = (actual) => 
       obj = {}
       expect(@fakeExpect).toHaveBeenCalled()
       expect(@fakeExpect.mostRecentCall.args).toEqual(jasmine.util.argsToArray(arguments))
@@ -150,12 +153,12 @@ describe "jasmine.features.dsl", ->
       Given -> affix('div').text("Yay")
       When -> @result = @subject.findContent("Yay")
       Then -> @result == true
-      Then -> @expected(true).toBe(true)      
+      Then -> didExpect(true).toBe(true)      
     
     context "does not exist", ->
       When -> @result = @subject.findContent("Boo")
       Then -> @result == false
-      Then -> @expected(false).toBe(true)
+      Then -> didExpect(false).toBe(true)
 
     context "using within", ->
       Given -> affix('.foo').text("Yay")
