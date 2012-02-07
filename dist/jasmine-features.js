@@ -16,8 +16,9 @@ site: https://github.com/searls/jasmine-features
 
   jasmine.features || (jasmine.features = {});
 
-  jasmine.features.addDsl = function($) {
+  jasmine.features.addDsl = function($, egspect) {
     var dsl, find, o$;
+    if (egspect == null) egspect = expect;
     o$ = $;
     find = function(nameOrSelector, type) {
       var $r;
@@ -31,23 +32,24 @@ site: https://github.com/searls/jasmine-features
         o$ = function(s) {
           return $(s, selector);
         };
+        o$.selector = selector;
         action();
         return o$ = $;
       },
       click: function(selector) {
-        expect(selector).toBeAttached();
+        egspect(selector).toBeAttached();
         return o$(selector).trigger('click');
       },
       fillIn: function(name, options) {
         var $input;
         $input = find(name);
-        expect($input).toBeAttached();
+        egspect($input).toBeAttached();
         switch ($input.attr('type')) {
           case "checkbox":
             return check(name, options["with"]);
           default:
             $input.val(options["with"]).trigger('change');
-            return expect($input.val()).toEqual(options["with"]);
+            return egspect($input.val()).toEqual(options["with"]);
         }
       },
       check: function(name, doCheckIt) {
@@ -55,7 +57,7 @@ site: https://github.com/searls/jasmine-features
         if (doCheckIt == null) doCheckIt = true;
         $checkbox = find(name, ":checkbox");
         $checkbox.attr('checked', doCheckIt).trigger('change');
-        return expect($checkbox.is(':checked')).toBe(doCheckIt);
+        return egspect($checkbox.is(':checked')).toBe(doCheckIt);
       },
       uncheck: function(name) {
         return dsl.check(name, false);
@@ -68,6 +70,12 @@ site: https://github.com/searls/jasmine-features
           dx: $to.offset().left - $from.offset().left,
           dy: $to.offset().top - $from.offset().top
         });
+      },
+      findContent: function(text) {
+        var matches;
+        matches = $(o$.selector || 'body').text().indexOf(text) !== -1;
+        egspect(matches).toBe(true);
+        return matches;
       }
     };
     _(window).extend(dsl);

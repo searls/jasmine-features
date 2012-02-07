@@ -12,7 +12,7 @@ It depends on jQuery & Underscore.
 
 tl;dr use jasmine for unit tests and don't use jasmine-features without good cause.
 
-### jasmine is for unit tests
+### Jasmine is for unit tests
 
 First things first: **[jasmine is designed for unit tests!](https://twitter.com/dwfrank/status/164583104542023680)** A unit test has these attributes:
 
@@ -24,29 +24,29 @@ Taking things even further, the present author believes jasmine works best for *
 
 * Uses [test doubles](http://en.wikipedia.org/wiki/Test_double) in place of the actual dependencies & collaborators of the unit being specified (jasmine provides a great [spy API](https://github.com/pivotal/jasmine/wiki/Spies) for this)
 
-### jasmine is not for acceptance tests
+### Jasmine is not for acceptance tests
 
-There are all sorts of great existing tools for writing acceptance tests. They should be considered 
+There are all sorts of great existing tools for writing acceptance tests. They should be considered before (and I'd expect, already in use) before adding jasmine-features to the mix. Additionally, a "full-stack" acceptance test tool will probably be necessary in order to include your tests in continuous integration.
 
 * For Ruby, there's [Cucumber](http://cukes.info/)/[Steak](https://github.com/cavalle/steak)/[RSpec](http://rspec.info/) + [Capybara](https://github.com/jnicklas/capybara)
 
-* For all sorts of other environemnts, there's [Selenium](http://seleniumhq.org/)
+* For all sorts of other environments, there's [Selenium](http://seleniumhq.org/)
 
 And in addition to being feature-rich, these tools provide a number of advantages that a pure intra-browser acceptance test would struggle to provide. Most importantly, traditional acceptance tests can and should control the full-stack environment (database environment, test data, server software, browser automation, teardown between tests).
 
-### so when should I use jasmine-features for acceptance tests?
+### So when should I use jasmine-features for acceptance tests?
 
-If your acceptance tests are slow.
+If your current acceptance tests are too slow.
 
 For many projects, acceptance tests are **very very slow**. On a complex Rails project, it's not uncommon for each Cucumber scenario to require tens of seconds to get started. This can be a huge productivity drain if you're using acceptance tests to practice [behavior-driven development](http://www.knwang.com/behavior-driven-outside-in-development-explai). In BDD, any significant lag in your feedback loop (either in your acceptance tests or your unit tests) will undercut a huge part of BDD's value: **focus**.
 
-jasmine-features is a way to steal back fast feedback from your project's acceptance test tool. It does this by allowing you to run the same functional test from eitehr your browser (via the console or a bookmarklet) or from your existing acceptance test. In jasmine-features, you'd write your own integrated/functional tests with jasmine and include them on the page in non-production environments.
+jasmine-features is a way to steal back fast feedback from your project's acceptance test tool. It does this by allowing you to run the same functional test (a) manually from your browser via the console or a bookmarklet or (b) automatically from your existing acceptance test tool. In jasmine-features, you'd write your own integrated/functional tests with jasmine and include them on the page in non-production environments.
 
 ## How to use jasmine-features
 
 ### Add jasmine, jasmine-features, and your tests to the page
 
-To run functional tests within your existing page, it means that jasmine, jasmine-features, and your tests be loaded (and dormant) in your page's non-production code. Here's the example from this repo's `index.erb`:
+To run functional tests within your existing page, then jasmine, jasmine-features, and your app's tests need to be loaded in your page's non-production code. Here's the example from this repo's [index.erb](https://github.com/searls/jasmine-features/blob/master/views/index.erb):
 
 ``` erb
 <% unless ENV['RACK_ENV'] == "production" %>
@@ -61,6 +61,8 @@ To run functional tests within your existing page, it means that jasmine, jasmin
 
 ### Write a feature test
 
+Here's a very simple example feature test from this repo in [form_feature.coffee](https://github.com/searls/jasmine-features/blob/master/public/features/form_feature.coffee).
+
 [Note that this example uses [CoffeeScript](http://coffeescript.org) and [jasmine-given](https://github.com/searls/jasmine-given)]
 
 ``` coffeescript
@@ -68,7 +70,7 @@ Feature "simple form", ->
   Given -> fillIn "firstName", with: "santa"
   Given -> fillIn "lastName", with: "claus"
   Given -> click '#submitButton'
-  Then -> expect(jasmine.features.$('#submitButton')).toBeAttached()
+  Then -> findContent "Submitted!"
 ```
 
 The `Feature` function is used in a way that's similar to Jasmine's `describe`. In addition to allowing the tests to be run multiple times without loading the page, it will help ensure that your acceptance tests won't be executed along with your unit specs.

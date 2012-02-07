@@ -1,6 +1,6 @@
 jasmine ||= {}
 jasmine.features ||= {}
-jasmine.features.addDsl = ($) ->
+jasmine.features.addDsl = ($, egspect=expect) ->
   o$ = $
 
   find = (nameOrSelector,type=":input") ->
@@ -11,24 +11,25 @@ jasmine.features.addDsl = ($) ->
   dsl =
     within: (selector, action) ->
       o$ = (s) -> $(s,selector)
+      o$.selector = selector
       action()
-      o$ = $
+      o$ = $      
     click: (selector) ->
-      expect(selector).toBeAttached()
+      egspect(selector).toBeAttached()
       o$(selector).trigger('click')
     fillIn: (name, options) ->
       $input = find(name)
-      expect($input).toBeAttached()
+      egspect($input).toBeAttached()
       switch $input.attr('type')
         when "checkbox"
           check(name,options.with)
         else
           $input.val(options.with).trigger('change')
-          expect($input.val()).toEqual(options.with)
+          egspect($input.val()).toEqual(options.with)
     check: (name, doCheckIt = true) ->
       $checkbox = find(name,":checkbox")
       $checkbox.attr('checked',doCheckIt).trigger('change')
-      expect($checkbox.is(':checked')).toBe(doCheckIt)
+      egspect($checkbox.is(':checked')).toBe(doCheckIt)
     uncheck: (name) ->
       dsl.check(name,false)
     drag: (selector,options) ->
@@ -38,6 +39,10 @@ jasmine.features.addDsl = ($) ->
       $from.simulate 'drag',
         dx: $to.offset().left - $from.offset().left
         dy: $to.offset().top - $from.offset().top
+    findContent: (text) ->      
+      matches = $(o$.selector or 'body').text().indexOf(text) != -1
+      egspect(matches).toBe(true)
+      matches
 
   _(window).extend(dsl)
   dsl
