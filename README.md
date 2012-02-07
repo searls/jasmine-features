@@ -100,7 +100,9 @@ Here's an example of a bookmarklet one could use to run their features: `javascr
 
 #### Cucumber
 
-Similarly, the same test can be kicked off with Cucumber. Take for example, this feature file:
+Similarly, the same test can be kicked off with Cucumber. This way, the tests you write with jasmine-features can easily be included as part of your project's continuous integration build and/or tested under a number of different application configurations. 
+
+Take for example, this feature file:
 
 ``` gherkin
 Feature:
