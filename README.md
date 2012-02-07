@@ -2,7 +2,7 @@
 
 [![Build Status](https://secure.travis-ci.org/searls/jasmine-features.png)](http://travis-ci.org/searls/jasmine-features)
 
-**[Download the latest version here](https://github.com/searls/jasmine-features/archives/master)**.
+**[Download the latest version here](https://raw.github.com/searls/jasmine-features/master/dist/jasmine-features.js)**.
 
 jasmine-features is a jasmine add-on that makes it easier to write functional tests with Jasmine. It provides a custom reporter, a browser automation DSL, and examples for how to piggyback on Cucumber steps for inclusion with your tests' full stack test suite.
 
