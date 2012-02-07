@@ -1,5 +1,5 @@
 Feature "simple form", ->
   Given -> fillIn "firstName", with: "santa"
   Given -> fillIn "lastName", with: "claus"
-  Given -> click '#submitButton'
+  When -> click '#submitButton'
   Then -> findContent "Submitted!"
