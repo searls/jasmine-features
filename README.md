@@ -77,7 +77,7 @@ The `Feature` function is used in a way that's similar to Jasmine's `describe`. 
 
 #### Capybara-ish DSL
 
-jasmine-features adds a handful of methods that are similar to Capybara. At present, they are:
+jasmine-features adds a handful of methods that are similar to [Capybara](https://github.com/jnicklas/capybara)'s DSL. At present, they are:
 
 * **click** (*selector*) - clicks on whatever matches the selector
 * **fillIn** (*name or selector*, { with: *value*}) - fill in a form field. Currently works with text `input` fields, checkboxes, and `select` fields
@@ -85,6 +85,7 @@ jasmine-features adds a handful of methods that are similar to Capybara. At pres
 * **uncheck** (*name or selector*) - uncheck a checkbox matching the name or selector
 * **drag** (*selector*, { to: *selector*}) - drags an element at the provided selector to the provided "to" selector
 * **within** (*selector*, *function actions*) - limits the scope of the DSL actions in the provided function to that of the provided selector.
+* **findContent** (*text*) - searches the page (or `within` scope) for the provided text. Returns true or false and will fail the test if the text is not found.
 
 Each of the provided DSL methods (unlike most jQuery interactions) are guarded by asserts as appropriate (for example, `fillIn` will first expect the input to exist, then expect the value was actually set after invoking `$.fn.val()`).
 
@@ -97,7 +98,7 @@ Your jasmine-feature tests can be kicked off by invoking `jasmine.features.run()
 
 Here's an example of the bookmarklet I'm using (drag it to your browser's toolbar):
 
-* [Run All Features](javascript:jasmine.features.run())
+* <a href="javascript:jasmine.features.run()">Run All Features</a>
 
 #### Cucumber
 
