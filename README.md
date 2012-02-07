@@ -148,7 +148,13 @@ bundle exec shotgun
 
 Then you can visit [http://localhost:9393](http://localhost:9393) and run the tests by invoking `jasmine.features.run()`.
 
-Alternatively, you can run the build, which will run the cukes (it's configured to use capybara-webkit, which requires the qt library to be installed):
+To run Cucumber (it's configured to use capybara-webkit, which requires the qt library to be installed):
+
+``` bash
+bundle exec cucumber
+```
+
+You could also run the entire build (if you have npm & coffee-script installed), which will run the specs, compile the source to `dist/`, and then run the cukes: 
 
 ``` bash
 bundle exec rake
