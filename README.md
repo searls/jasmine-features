@@ -96,9 +96,7 @@ Your jasmine-feature tests can be kicked off by invoking `jasmine.features.run()
 
 #### Bookmarklet
 
-Here's an example of the bookmarklet I'm using (drag it to your browser's toolbar):
-
-* <a href="javascript:jasmine.features.run()">Run All Features</a>
+Here's an example of a bookmarklet one could use to run their features: `javascript:jasmine.features.run()`
 
 #### Cucumber
 
