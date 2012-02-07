@@ -2,6 +2,19 @@ describe "jasmine.features.dsl", ->
   Given -> jasmine.features.using(jQuery: $)
   Given -> @fakeMatchers = jasmine.createSpyObj('matchers',['toBeAttached','toEqual', 'toBe'])
   Given -> @fakeExpect = jasmine.createSpy().andReturn(@fakeMatchers)
+  Given ->
+    @expected = (actual) => 
+      obj = {}
+      expect(@fakeExpect).toHaveBeenCalled()
+      expect(@fakeExpect.mostRecentCall.args).toEqual(jasmine.util.argsToArray(arguments))
+
+      _(@fakeMatchers).chain().functions().each (f) =>        
+        obj[f] = =>
+          fakeMatcher = @fakeMatchers[f]
+          expect(fakeMatcher).toHaveBeenCalled()
+          expect(fakeMatcher.mostRecentCall.args).toEqual(jasmine.util.argsToArray(arguments))
+      obj
+
   Given -> @subject = jasmine.features.addDsl($,@fakeExpect)
 
   describe ".within", ->
@@ -132,18 +145,17 @@ describe "jasmine.features.dsl", ->
       Then -> expect($.fn.simulate).toHaveBeenCalledWith('drag', {dx: -29, dy: -182})
 
   describe ".findContent", ->
+    
     context "exists on the page", ->
       Given -> affix('div').text("Yay")
       When -> @result = @subject.findContent("Yay")
       Then -> @result == true
-      Then -> expect(@fakeExpect).toHaveBeenCalledWith(true)
-      Then -> expect(@fakeMatchers.toBe).toHaveBeenCalledWith(true)
+      Then -> @expected(true).toBe(true)      
     
     context "does not exist", ->
       When -> @result = @subject.findContent("Boo")
       Then -> @result == false
-      Then -> expect(@fakeExpect).toHaveBeenCalledWith(false)
-      Then -> expect(@fakeMatchers.toBe).toHaveBeenCalledWith(true)
+      Then -> @expected(false).toBe(true)
 
     context "using within", ->
       Given -> affix('.foo').text("Yay")
