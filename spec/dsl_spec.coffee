@@ -186,6 +186,46 @@ describe "jasmine.features.dsl", ->
         Then -> expect(@$foo.is(":checked")).toBe(false)
         Then -> didExpect(false).toBe(false)
 
+    describe ".choose", ->
+      Given -> @$radio = affix("input[type=\"radio\"]")
+
+      context "choosing by id", ->
+        Given -> @$radio.attr('id','foo')
+        When -> @subject.choose('foo')
+        Then -> didExpect(@$radio).toBeAttached()
+        Then -> @$radio.is(":checked") == true
+
+      context "choosing by label", ->
+        Given -> @$radio.attr('id','foo')
+        Given -> affix('label[for="foo"]').text("Some label")
+        When -> @subject.choose('Some label')
+        Then -> didExpect(@$radio).toBeAttached()
+        Then -> @$radio.is(":checked") == true
+
+      context "no match", ->
+        When -> @subject.choose('Some label')
+        Then -> didExpect([]).toBeAttached()
+        Then -> @$radio.is(":checked") == false
+
+      context "choosing by name", ->
+        Given -> @$radio.attr('name','pants')
+        When -> @subject.choose('pants')
+        Then -> didExpect(@$radio).toBeAttached()
+        Then -> @$radio.is(":checked") == true
+
+      context "choosing by a normal selector", ->
+        Given -> @$radio.attr('name','pants')
+        When -> @subject.choose(':radio[name="pants"]')
+        Then -> didExpect(@$radio).toBeAttached()
+        Then -> @$radio.is(":checked") == true
+
+
+      context "a matching non-radio", ->
+        Given -> @$radio = affix('input[type="checkbox"]').attr('name','pants')
+        When -> @subject.choose('pants')
+        Then -> didExpect([]).toBeAttached()
+        Then -> @$radio.is(":checked") == false
+
   describe "Querying", ->
     describe ".findContent", ->
 
