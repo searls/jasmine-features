@@ -1,12 +1,12 @@
 describe "jasmine.features.dsl", ->
   Given -> jasmine.features.using(jQuery: $)
-  
+
   #This let's us set up expectations of the dsl's expectations with didExpect()
   Given -> @fakeMatchers = jasmine.createSpyObj('expect()',['toBeAttached','toEqual', 'toBe'])
   Given -> @fakeExpect = jasmine.createSpy("expect").andReturn(@fakeMatchers)
   didExpect=null
   Given ->
-    didExpect = (actual) => 
+    didExpect = (actual) =>
       obj = {}
       expect(@fakeExpect).toHaveBeenCalled()
 
@@ -24,8 +24,8 @@ describe "jasmine.features.dsl", ->
         @fail("expect() was not called with [#{expectedArgs}], but was called with #{_(spy.calls).pluck("args").join(" | ")}") unless argsMatched
 
       ensureCalledWith(@fakeExpect,arguments)
-      
-      _(@fakeMatchers).chain().functions().each (f) =>        
+
+      _(@fakeMatchers).chain().functions().each (f) =>
         obj[f] = =>
           fakeMatcher = @fakeMatchers[f]
           expect(fakeMatcher).toHaveBeenCalled()
@@ -34,97 +34,126 @@ describe "jasmine.features.dsl", ->
 
   Given -> @subject = jasmine.features.addDsl($,@fakeExpect)
 
-  describe ".within", ->
-    Given -> affix('.panda').affix('a.secret.win').on('click',@winSpy = jasmine.createSpy())
-    Given -> affix('a.secret.fail').on('click',@failSpy = jasmine.createSpy())
-    Given -> @subject.within '.panda', =>
-      @subject.click('a.secret')
-    Then -> expect(@winSpy).toHaveBeenCalled()
-    Then -> expect(@failSpy).not.toHaveBeenCalled()
-
-  describe ".click", ->
-    Given -> @captor = jasmine.captor()
-    Given -> @$foo = affix('#foo').on('click',@handler = jasmine.createSpy())
-    When -> @subject.click('#foo')
-    Then( -> expect(@handler).toHaveBeenCalledWith(@captor.capture()))
-    .Then( -> @captor.value instanceof $.Event)
-    .Then( -> @captor.value.target == @$foo[0])
-    .Then( -> @captor.value.type == 'click')
-    .Then( -> didExpect('#foo').toBeAttached())
-
-  describe ".fillIn with:", ->
-    Given -> @val = "some text"
-
-    describe "the $.event handler", ->
+  describe "Clicking links and buttons", ->
+    describe ".click", ->
       Given -> @captor = jasmine.captor()
-      Given -> @$foo = affix('input[type="text"][name="foo"]').on('change',@handler = jasmine.createSpy())
-      When -> @subject.fillIn('foo', with: @val)
+      Given -> @$foo = affix('#foo').on('click',@handler = jasmine.createSpy())
+      When -> @subject.click('#foo')
       Then( -> expect(@handler).toHaveBeenCalledWith(@captor.capture()))
       .Then( -> @captor.value instanceof $.Event)
       .Then( -> @captor.value.target == @$foo[0])
-      .Then( -> @captor.value.type == 'change')
-      .Then( -> didExpect(@$foo).toBeAttached() )
+      .Then( -> @captor.value.type == 'click')
+      .Then( -> didExpect('#foo').toBeAttached())
 
-    describe "setting the value", ->
+  describe "Interacting with forms", ->
+    describe ".fillIn with:", ->
+      Given -> @val = "some text"
 
-      context "input[type=text]", ->
-        context "by name", ->
-          Given -> @$foo = affix('input[type="text"][name="foo"]')
-          When -> @subject.fillIn('foo', with: @val)
-          Then -> expect(@$foo.val()).toBe(@val)
-          Then -> didExpect(@val).toEqual(@val)
+      describe "the $.event handler", ->
+        Given -> @captor = jasmine.captor()
+        Given -> @$foo = affix('input[type="text"][name="foo"]').on('change',@handler = jasmine.createSpy())
+        When -> @subject.fillIn('foo', with: @val)
+        Then( -> expect(@handler).toHaveBeenCalledWith(@captor.capture()))
+        .Then( -> @captor.value instanceof $.Event)
+        .Then( -> @captor.value.target == @$foo[0])
+        .Then( -> @captor.value.type == 'change')
+        .Then( -> didExpect(@$foo).toBeAttached() )
 
-        context "by some other selector", ->
-          Given -> @$foo = affix('input#foo[type="text"]')
-          When -> @subject.fillIn('#foo', with: @val)
-          Then -> expect(@$foo.val()).toBe(@val)
-          Then -> didExpect(@val).toEqual(@val)
+      describe "setting the value", ->
 
-      context "input[type=checkbox]", ->
-        Given -> @val = true
+        context "input[type=text]", ->
+          context "by name", ->
+            Given -> @$foo = affix('input[type="text"][name="foo"]')
+            When -> @subject.fillIn('foo', with: @val)
+            Then -> expect(@$foo.val()).toBe(@val)
+            Then -> didExpect(@val).toEqual(@val)
 
-        context "by name", ->
-          Given -> @$foo = affix('input[type="checkbox"][name="foo"]')
-          When -> @subject.fillIn('foo', with: @val)
-          Then -> expect(@$foo.is(":checked")).toBe(true)
+          context "by some other selector", ->
+            Given -> @$foo = affix('input#foo[type="text"]')
+            When -> @subject.fillIn('#foo', with: @val)
+            Then -> expect(@$foo.val()).toBe(@val)
+            Then -> didExpect(@val).toEqual(@val)
 
-        context "by some other selector", ->
-          Given -> @$foo = affix('input#foo[type="checkbox"]')
-          When -> @subject.fillIn('#foo', with: @val)
-          Then -> expect(@$foo.is(":checked")).toBe(true)
+        context "input[type=checkbox]", ->
+          Given -> @val = true
 
-  describe ".check", ->
-    Given -> @val = true
+          context "by name", ->
+            Given -> @$foo = affix('input[type="checkbox"][name="foo"]')
+            When -> @subject.fillIn('foo', with: @val)
+            Then -> expect(@$foo.is(":checked")).toBe(true)
 
-    context "by name", ->
-      Given -> @$foo = affix('input[type="checkbox"][name="foo"]')
-      When -> @subject.check('foo')
-      Then -> expect(@$foo.is(":checked")).toBe(true)
-      Then -> didExpect(true).toBe(true)
+          context "by some other selector", ->
+            Given -> @$foo = affix('input#foo[type="checkbox"]')
+            When -> @subject.fillIn('#foo', with: @val)
+            Then -> expect(@$foo.is(":checked")).toBe(true)
 
-      context "~unchecking it with check", ->
-        When -> @subject.check('foo',false)
+    describe ".check", ->
+      Given -> @val = true
+
+      context "by name", ->
+        Given -> @$foo = affix('input[type="checkbox"][name="foo"]')
+        When -> @subject.check('foo')
+        Then -> expect(@$foo.is(":checked")).toBe(true)
+        Then -> didExpect(true).toBe(true)
+
+        context "~unchecking it with check", ->
+          When -> @subject.check('foo',false)
+          Then -> expect(@$foo.is(":checked")).toBe(false)
+          Then -> didExpect(false).toBe(false)
+
+      context "by some other selector", ->
+        Given -> @$foo = affix('input#foo[type="checkbox"]')
+        When -> @subject.check('#foo')
+        Then -> expect(@$foo.is(":checked")).toBe(true)
+        Then -> didExpect(true).toBe(true)
+
+    describe ".uncheck", ->
+      context "by name", ->
+        Given -> @$foo = affix('input[type="checkbox"][name="foo"][checked="checked"]')
+        When -> @subject.uncheck('foo')
         Then -> expect(@$foo.is(":checked")).toBe(false)
         Then -> didExpect(false).toBe(false)
 
-    context "by some other selector", ->
-      Given -> @$foo = affix('input#foo[type="checkbox"]')
-      When -> @subject.check('#foo')
-      Then -> expect(@$foo.is(":checked")).toBe(true)
-      Then -> didExpect(true).toBe(true)
+      context "by some other selector", ->
+        Given -> @$foo = affix('input#foo[type="checkbox"]')
+        When -> @subject.uncheck('#foo')
+        Then -> expect(@$foo.is(":checked")).toBe(false)
+        Then -> didExpect(false).toBe(false)
 
-  describe ".uncheck", ->
-    context "by name", ->
-      Given -> @$foo = affix('input[type="checkbox"][name="foo"][checked="checked"]')
-      When -> @subject.uncheck('foo')
-      Then -> expect(@$foo.is(":checked")).toBe(false)
-      Then -> didExpect(false).toBe(false)
+  describe "Querying", ->
+    describe ".findContent", ->
 
-    context "by some other selector", ->
-      Given -> @$foo = affix('input#foo[type="checkbox"]')
-      When -> @subject.uncheck('#foo')
-      Then -> expect(@$foo.is(":checked")).toBe(false)
-      Then -> didExpect(false).toBe(false)
+      context "exists on the page", ->
+        Given -> affix('div').text("Yay")
+        When -> @result = @subject.findContent("Yay")
+        Then -> @result == true
+        Then -> didExpect(true).toBe(true)
+
+      context "does not exist", ->
+        When -> @result = @subject.findContent("Boo")
+        Then -> @result == false
+        Then -> didExpect(false).toBe(true)
+
+      context "using within", ->
+        Given -> affix('.foo').text("Yay")
+        Given -> affix('.bar')
+        When -> @subject.within '.bar', =>
+          @result = @subject.findContent("Yay")
+        Then -> @result == false
+        Then -> didExpect(false).toBe(true)
+
+  describe "Scoping", ->
+    describe ".within", ->
+      Given -> affix('.panda').affix('a.secret.win').on('click',@winSpy = jasmine.createSpy())
+      Given -> affix('a.secret.fail').on('click',@failSpy = jasmine.createSpy())
+      Given -> @subject.within '.panda', =>
+        @subject.click('a.secret')
+      Then -> expect(@winSpy).toHaveBeenCalled()
+      Then -> expect(@failSpy).not.toHaveBeenCalled()
+
+
+
+
 
   describe ".drag to:", ->
     Given -> $.fn.simulate = jasmine.createSpy()
@@ -169,26 +198,3 @@ describe "jasmine.features.dsl", ->
 
       When -> @subject.drag '.panda', to: '.bamboo'
       Then -> expect($.fn.simulate).toHaveBeenCalledWith('drag', {dx: -29, dy: -182})
-
-  describe ".findContent", ->
-    
-    context "exists on the page", ->
-      Given -> affix('div').text("Yay")
-      When -> @result = @subject.findContent("Yay")
-      Then -> @result == true
-      Then -> didExpect(true).toBe(true)      
-    
-    context "does not exist", ->
-      When -> @result = @subject.findContent("Boo")
-      Then -> @result == false
-      Then -> didExpect(false).toBe(true)
-
-    context "using within", ->
-      Given -> affix('.foo').text("Yay")
-      Given -> affix('.bar')
-      When -> @subject.within '.bar', => 
-        @result = @subject.findContent("Yay")
-      Then -> @result == false 
-      Then -> didExpect(false).toBe(true)
-
-    #context "does not exist on the page"

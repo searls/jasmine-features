@@ -9,14 +9,12 @@ jasmine.features.addDsl = ($, egspect=expect) ->
     $r
 
   dsl =
-    within: (selector, action) ->
-      o$ = (s) -> $(s,selector)
-      o$.selector = selector
-      action()
-      o$ = $      
+    #clicking
     click: (selector) ->
       egspect(selector).toBeAttached()
       o$(selector).trigger('click')
+
+    #forms
     fillIn: (name, options) ->
       $input = find(name)
       egspect($input).toBeAttached()
@@ -32,6 +30,20 @@ jasmine.features.addDsl = ($, egspect=expect) ->
       egspect($checkbox.is(':checked')).toBe(doCheckIt)
     uncheck: (name) ->
       dsl.check(name,false)
+
+    #querying
+    findContent: (text) ->
+      matches = $(o$.selector or 'body').text().indexOf(text) != -1
+      egspect(matches).toBe(true)
+      matches
+
+    #scoping
+    within: (selector, action) ->
+      o$ = (s) -> $(s,selector)
+      o$.selector = selector
+      action()
+      o$ = $
+
     drag: (selector,options) ->
       $from = o$(selector)
       $to = o$(options.to)
@@ -39,10 +51,7 @@ jasmine.features.addDsl = ($, egspect=expect) ->
       $from.simulate 'drag',
         dx: $to.offset().left - $from.offset().left
         dy: $to.offset().top - $from.offset().top
-    findContent: (text) ->      
-      matches = $(o$.selector or 'body').text().indexOf(text) != -1
-      egspect(matches).toBe(true)
-      matches
+
 
   _(window).extend(dsl)
   dsl
