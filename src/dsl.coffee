@@ -48,7 +48,7 @@ jasmine.features.addDsl = ($, egspect=expect) ->
     choose: (locator) ->
       $radio = find(locator,":radio")
       egspect($radio).toBeAttached()
-      $radio.attr('checked',true)
+      $radio.attr('checked',true).trigger('change')
 
     #querying
     findContent: (text) ->

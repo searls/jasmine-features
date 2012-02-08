@@ -114,41 +114,49 @@ describe "jasmine.features.dsl", ->
   describe "Interacting with forms", ->
     behavesLikeFormField = (method, exampleSelector, wasFilledTest) ->
       describe ".#{method}", ->
-        Given -> @$field = affix(exampleSelector)
+        Given -> @$field = affix(exampleSelector).on('change',@handler = jasmine.createSpy())
+
+        describe "the $.event handler", ->
+          Given -> @captor = jasmine.captor()
+          When -> @subject[method](exampleSelector)
+          Then( -> expect(@handler).toHaveBeenCalledWith(@captor.capture()))
+          .Then( -> @captor.value instanceof $.Event)
+          .Then( -> @captor.value.target == @$field[0])
+          .Then( -> @captor.value.type == 'change')
 
         context "choosing by id", ->
           Given -> @$field.attr('id','foo')
-          When -> @subject.choose('foo')
+          When -> @subject[method]('foo')
           Then -> didExpect(@$field).toBeAttached()
           Then -> wasFilledTest(@$field) == true
 
         context "choosing by label", ->
           Given -> @$field.attr('id','foo')
           Given -> affix('label[for="foo"]').text("Some label")
-          When -> @subject.choose('Some label')
+          When -> @subject[method]('Some label')
           Then -> didExpect(@$field).toBeAttached()
           Then -> wasFilledTest(@$field) == true
 
         context "no match", ->
-          When -> @subject.choose('Some label')
+          When -> @subject[method]('Some label')
           Then -> didExpect([]).toBeAttached()
           Then -> wasFilledTest(@$field) == false
 
         context "choosing by name", ->
           Given -> @$field.attr('name','pants')
-          When -> @subject.choose('pants')
+          When -> @subject[method]('pants')
           Then -> didExpect(@$field).toBeAttached()
           Then -> wasFilledTest(@$field) == true
 
         context "choosing by a normal selector", ->
           Given -> @$field.attr('name','pants')
-          When -> @subject.choose(':radio[name="pants"]')
+          When -> @subject[method](':radio[name="pants"]')
           Then -> didExpect(@$field).toBeAttached()
           Then -> wasFilledTest(@$field) == true
 
         context "a matching non-field", ->
           Given -> @$field = affix('input[type="checkbox"]').attr('name','pants')
-          When -> @subject.choose('pants')
+          When -> @subject[method]('pants')
           Then -> didExpect([]).toBeAttached()
           Then -> wasFilledTest(@$field) == false
 
