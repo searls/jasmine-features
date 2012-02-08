@@ -112,7 +112,7 @@ describe "jasmine.features.dsl", ->
             Then -> expect(@handler).not.toHaveBeenCalled()
 
   describe "Interacting with forms", ->
-    behavesLikeFormField = (method, exampleSelector, wasFilledTest) ->
+    behavesLikeFormField = (method, exampleSelector, intendedValue, wasFilledTest, valueFor) ->
       describe ".#{method}", ->
         Given -> @$field = affix(exampleSelector).on('change',@handler = jasmine.createSpy())
 
@@ -129,6 +129,7 @@ describe "jasmine.features.dsl", ->
           When -> @subject[method]('foo')
           Then -> didExpect(@$field).toBeAttached()
           Then -> wasFilledTest(@$field) == true
+          Then -> didExpect(valueFor(@$field)).toBe(intendedValue)
 
         context "choosing by label", ->
           Given -> @$field.attr('id','foo')
@@ -155,7 +156,7 @@ describe "jasmine.features.dsl", ->
           Then -> wasFilledTest(@$field) == true
 
         context "a matching non-field", ->
-          Given -> @$field = affix('input[type="foomail"]').attr('name','pants')
+          Given -> @$field = affix(exampleSelector.replace(/\[type=\"[^\]]*\"\]/,"[type=\"foomail\"]")).attr('name','pants')
           When -> @subject[method]('pants')
           Then -> didExpect([]).toBeAttached()
           Then -> wasFilledTest(@$field) == false
@@ -202,41 +203,9 @@ describe "jasmine.features.dsl", ->
             When -> @subject.fillIn('#foo', with: @val)
             Then -> expect(@$foo.is(":checked")).toBe(true)
 
-    describe ".check", ->
-      Given -> @val = true
-
-      context "by name", ->
-        Given -> @$foo = affix('input[type="checkbox"][name="foo"]')
-        When -> @subject.check('foo')
-        Then -> expect(@$foo.is(":checked")).toBe(true)
-        Then -> didExpect(true).toBe(true)
-
-        context "~unchecking it with check", ->
-          When -> @subject.check('foo',false)
-          Then -> expect(@$foo.is(":checked")).toBe(false)
-          Then -> didExpect(false).toBe(false)
-
-      context "by some other selector", ->
-        Given -> @$foo = affix('input#foo[type="checkbox"]')
-        When -> @subject.check('#foo')
-        Then -> expect(@$foo.is(":checked")).toBe(true)
-        Then -> didExpect(true).toBe(true)
-
-    describe ".uncheck", ->
-      context "by name", ->
-        Given -> @$foo = affix('input[type="checkbox"][name="foo"][checked="checked"]')
-        When -> @subject.uncheck('foo')
-        Then -> expect(@$foo.is(":checked")).toBe(false)
-        Then -> didExpect(false).toBe(false)
-
-      context "by some other selector", ->
-        Given -> @$foo = affix('input#foo[type="checkbox"]')
-        When -> @subject.uncheck('#foo')
-        Then -> expect(@$foo.is(":checked")).toBe(false)
-        Then -> didExpect(false).toBe(false)
-
-    behavesLikeFormField("check","input[type=\"checkbox\"]", ($field) -> $field.is(":checked") )
-    behavesLikeFormField("choose","input[type=\"radio\"]", ($field) -> $field.is(":checked") )
+    behavesLikeFormField("check","input[type=\"checkbox\"]", true, (($field) -> $field.is(":checked")), (($field) -> $field.is(":checked")) )
+    behavesLikeFormField("uncheck","input[type=\"checkbox\"][checked=\"checked\"]", false, (($field) -> $field.attr("checked") != "checked" ), (($field) -> $field.is(":checked")) )
+    behavesLikeFormField("choose","input[type=\"radio\"]", true, (($field) -> $field.is(":checked")), (($field) -> $field.is(":checked")) )
 
   describe "Querying", ->
     describe ".findContent", ->
