@@ -150,12 +150,12 @@ describe "jasmine.features.dsl", ->
 
         context "choosing by a normal selector", ->
           Given -> @$field.attr('name','pants')
-          When -> @subject[method](':radio[name="pants"]')
+          When -> @subject[method](':input[name="pants"]')
           Then -> didExpect(@$field).toBeAttached()
           Then -> wasFilledTest(@$field) == true
 
         context "a matching non-field", ->
-          Given -> @$field = affix('input[type="checkbox"]').attr('name','pants')
+          Given -> @$field = affix('input[type="foomail"]').attr('name','pants')
           When -> @subject[method]('pants')
           Then -> didExpect([]).toBeAttached()
           Then -> wasFilledTest(@$field) == false
@@ -235,6 +235,7 @@ describe "jasmine.features.dsl", ->
         Then -> expect(@$foo.is(":checked")).toBe(false)
         Then -> didExpect(false).toBe(false)
 
+    behavesLikeFormField("check","input[type=\"checkbox\"]", ($field) -> $field.is(":checked") )
     behavesLikeFormField("choose","input[type=\"radio\"]", ($field) -> $field.is(":checked") )
 
   describe "Querying", ->

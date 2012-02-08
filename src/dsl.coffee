@@ -8,6 +8,7 @@ jasmine.features.addDsl = ($, egspect=expect) ->
     $r = o$("#{type}[name=\"#{locator}\"]") if $r.length == 0
     $r = o$("#{type}[id=\"#{o$("label:contains(\"#{locator}\")").attr('for')}\"]") if $r.length == 0
     $r = o$(locator) if $r.length == 0
+    egspect($r).toBeAttached()
     $r
 
   dsl =
@@ -47,7 +48,6 @@ jasmine.features.addDsl = ($, egspect=expect) ->
       dsl.check(name,false)
     choose: (locator) ->
       $radio = find(locator,":radio")
-      egspect($radio).toBeAttached()
       $radio.attr('checked',true).trigger('change')
 
     #querying
