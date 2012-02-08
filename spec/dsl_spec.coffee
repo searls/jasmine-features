@@ -70,6 +70,101 @@ describe "jasmine.features.dsl", ->
         Then -> didExpect([]).toBeAttached()
         Then -> expect(@handler).not.toHaveBeenCalled()
 
+    describe ".clickButton", ->
+      describe "button elements", ->
+        Given -> @$button = affix("button").on('click',@handler = jasmine.createSpy())
+
+        context "by id", ->
+          Given -> @$button.attr('id','foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by text content", ->
+          Given -> @$button.text('foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by arbitrary filtering selection", ->
+          Given -> @$button.addClass('foo')
+          When -> @subject.clickButton('.foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by matching a non-button", ->
+          Given -> affix('a').on('click',@handler).text('foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect([]).toBeAttached()
+          Then -> expect(@handler).not.toHaveBeenCalled()
+
+      describe "input type button", ->
+        Given -> @$button = affix("input[type=\"button\"]").on('click',@handler = jasmine.createSpy())
+
+        context "by id", ->
+          Given -> @$button.attr('id','foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by name", ->
+          Given -> @$button.attr('name','foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by text content", ->
+          Given -> @$button.val('foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by arbitrary filtering selection", ->
+          Given -> @$button.addClass('foo')
+          When -> @subject.clickButton('.foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by matching a non-button", ->
+          Given -> affix('a').on('click',@handler).val('foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect([]).toBeAttached()
+          Then -> expect(@handler).not.toHaveBeenCalled()
+
+
+      describe "input type submit", ->
+        Given -> @$button = affix("input[type=\"submit\"]").on('click',@handler = jasmine.createSpy())
+
+        context "by id", ->
+          Given -> @$button.attr('id','foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by name", ->
+          Given -> @$button.attr('name','foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by text content", ->
+          Given -> @$button.val('foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by arbitrary filtering selection", ->
+          Given -> @$button.addClass('foo')
+          When -> @subject.clickButton('.foo')
+          Then -> didExpect(@$button).toBeAttached()
+          Then -> expect(@handler).toHaveBeenCalled()
+
+        context "by matching a non-button", ->
+          Given -> affix('a').on('click',@handler).val('foo')
+          When -> @subject.clickButton('foo')
+          Then -> didExpect([]).toBeAttached()
+          Then -> expect(@handler).not.toHaveBeenCalled()
+
   describe "Interacting with forms", ->
     describe ".fillIn with:", ->
       Given -> @val = "some text"

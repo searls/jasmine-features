@@ -20,6 +20,13 @@ jasmine.features.addDsl = ($, egspect=expect) ->
       $link = o$('a').filter(selector) if $link.length == 0
       dsl.click $link
 
+    clickButton: (selector) ->
+      $button = o$(_([":button","input[type=\"submit\"]"]).map( (elPrefix) ->
+        "#{elPrefix}[id=\"#{selector}\"],#{elPrefix}[name=\"#{selector}\"],#{elPrefix}[value=\"#{selector}\"],#{elPrefix}:contains(#{selector})"
+      ).join(","))
+      $button = o$(':button,"input[type=\"submit\"]"').filter(selector) if $button.length == 0
+      dsl.click $button
+
     #forms
     fillIn: (name, options) ->
       $input = find(name)
