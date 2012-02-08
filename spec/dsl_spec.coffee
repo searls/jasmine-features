@@ -43,7 +43,32 @@ describe "jasmine.features.dsl", ->
       .Then( -> @captor.value instanceof $.Event)
       .Then( -> @captor.value.target == @$foo[0])
       .Then( -> @captor.value.type == 'click')
-      .Then( -> didExpect('#foo').toBeAttached())
+      .Then( -> didExpect(@$foo).toBeAttached())
+
+    describe ".clickLink", ->
+      context "by id", ->
+        Given -> @$link = affix("a#link").on('click',@handler = jasmine.createSpy())
+        When -> clickLink("link")
+        Then -> didExpect(@$link).toBeAttached()
+        Then -> expect(@handler).toHaveBeenCalled()
+
+      context "by link content", ->
+        Given -> @$link = affix("a").text('My Link').on('click',@handler = jasmine.createSpy())
+        When -> @subject.clickLink("My Link")
+        Then -> didExpect(@$link).toBeAttached()
+        Then -> expect(@handler).toHaveBeenCalled()
+
+      context "by some filtering selector", ->
+        Given -> @$link = affix("a.link").on('click',@handler = jasmine.createSpy())
+        When -> @subject.clickLink(".link")
+        Then -> didExpect(@$link).toBeAttached()
+        Then -> expect(@handler).toHaveBeenCalled()
+
+      context "matching a non-anchor tag", ->
+        Given -> @$link = affix("span#link").on('click',@handler = jasmine.createSpy())
+        When -> @subject.clickLink("link")
+        Then -> didExpect([]).toBeAttached()
+        Then -> expect(@handler).not.toHaveBeenCalled()
 
   describe "Interacting with forms", ->
     describe ".fillIn with:", ->
@@ -141,6 +166,8 @@ describe "jasmine.features.dsl", ->
           @result = @subject.findContent("Yay")
         Then -> @result == false
         Then -> didExpect(false).toBe(true)
+
+  describe "Finding", ->
 
   describe "Scoping", ->
     describe ".within", ->

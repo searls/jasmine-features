@@ -11,8 +11,14 @@ jasmine.features.addDsl = ($, egspect=expect) ->
   dsl =
     #clicking
     click: (selector) ->
-      egspect(selector).toBeAttached()
-      o$(selector).trigger('click')
+      $clickable = o$(selector)
+      egspect($clickable).toBeAttached()
+      $clickable.trigger('click')
+
+    clickLink: (selector) ->
+      $link = o$("a[id=\"#{selector}\"],a:contains(#{selector})")
+      $link = o$('a').filter(selector) if $link.length == 0
+      dsl.click $link
 
     #forms
     fillIn: (name, options) ->
