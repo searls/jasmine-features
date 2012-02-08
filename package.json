@@ -1,12 +1,12 @@
 {
   "name": "jasmine-features",
   "description": "Functional testing with Jasmine",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords": [
     "jasmine",
     "bdd",
-  	"atdd",
-  	"jasmine-feature"
+    "atdd",
+    "jasmine-feature"
   ],
   "dependencies": {
     "https://github.com/pivotal/jasmine": "Any"
@@ -27,9 +27,11 @@
     }
   ],
   "homepage": "https://github.com/searls/jasmine-features",
-  "maintainers":[ {
-     "name": "Justin Searls",
-     "email": "searls@gmail.com",
-     "web": "http://about.me/searls"
-  }]
+  "maintainers": [
+    {
+      "name": "Justin Searls",
+      "email": "searls@gmail.com",
+      "web": "http://about.me/searls"
+    }
+  ]
 }
