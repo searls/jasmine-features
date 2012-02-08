@@ -112,6 +112,47 @@ describe "jasmine.features.dsl", ->
             Then -> expect(@handler).not.toHaveBeenCalled()
 
   describe "Interacting with forms", ->
+    behavesLikeFormField = (method, exampleSelector, wasFilledTest) ->
+      describe ".#{method}", ->
+        Given -> @$field = affix(exampleSelector)
+
+        context "choosing by id", ->
+          Given -> @$field.attr('id','foo')
+          When -> @subject.choose('foo')
+          Then -> didExpect(@$field).toBeAttached()
+          Then -> wasFilledTest(@$field) == true
+
+        context "choosing by label", ->
+          Given -> @$field.attr('id','foo')
+          Given -> affix('label[for="foo"]').text("Some label")
+          When -> @subject.choose('Some label')
+          Then -> didExpect(@$field).toBeAttached()
+          Then -> wasFilledTest(@$field) == true
+
+        context "no match", ->
+          When -> @subject.choose('Some label')
+          Then -> didExpect([]).toBeAttached()
+          Then -> wasFilledTest(@$field) == false
+
+        context "choosing by name", ->
+          Given -> @$field.attr('name','pants')
+          When -> @subject.choose('pants')
+          Then -> didExpect(@$field).toBeAttached()
+          Then -> wasFilledTest(@$field) == true
+
+        context "choosing by a normal selector", ->
+          Given -> @$field.attr('name','pants')
+          When -> @subject.choose(':radio[name="pants"]')
+          Then -> didExpect(@$field).toBeAttached()
+          Then -> wasFilledTest(@$field) == true
+
+        context "a matching non-field", ->
+          Given -> @$field = affix('input[type="checkbox"]').attr('name','pants')
+          When -> @subject.choose('pants')
+          Then -> didExpect([]).toBeAttached()
+          Then -> wasFilledTest(@$field) == false
+
+
     describe ".fillIn with:", ->
       Given -> @val = "some text"
 
@@ -186,45 +227,7 @@ describe "jasmine.features.dsl", ->
         Then -> expect(@$foo.is(":checked")).toBe(false)
         Then -> didExpect(false).toBe(false)
 
-    describe ".choose", ->
-      Given -> @$radio = affix("input[type=\"radio\"]")
-
-      context "choosing by id", ->
-        Given -> @$radio.attr('id','foo')
-        When -> @subject.choose('foo')
-        Then -> didExpect(@$radio).toBeAttached()
-        Then -> @$radio.is(":checked") == true
-
-      context "choosing by label", ->
-        Given -> @$radio.attr('id','foo')
-        Given -> affix('label[for="foo"]').text("Some label")
-        When -> @subject.choose('Some label')
-        Then -> didExpect(@$radio).toBeAttached()
-        Then -> @$radio.is(":checked") == true
-
-      context "no match", ->
-        When -> @subject.choose('Some label')
-        Then -> didExpect([]).toBeAttached()
-        Then -> @$radio.is(":checked") == false
-
-      context "choosing by name", ->
-        Given -> @$radio.attr('name','pants')
-        When -> @subject.choose('pants')
-        Then -> didExpect(@$radio).toBeAttached()
-        Then -> @$radio.is(":checked") == true
-
-      context "choosing by a normal selector", ->
-        Given -> @$radio.attr('name','pants')
-        When -> @subject.choose(':radio[name="pants"]')
-        Then -> didExpect(@$radio).toBeAttached()
-        Then -> @$radio.is(":checked") == true
-
-
-      context "a matching non-radio", ->
-        Given -> @$radio = affix('input[type="checkbox"]').attr('name','pants')
-        When -> @subject.choose('pants')
-        Then -> didExpect([]).toBeAttached()
-        Then -> @$radio.is(":checked") == false
+    behavesLikeFormField("choose","input[type=\"radio\"]", ($field) -> $field.is(":checked") )
 
   describe "Querying", ->
     describe ".findContent", ->
