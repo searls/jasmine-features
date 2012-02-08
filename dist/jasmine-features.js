@@ -1,6 +1,6 @@
 
 /*
-jasmine-features 0.0.1
+jasmine-features 0.0.2
 
 A toolkit for writing functional/integrated tests with Jasmine in JavaScript
 
