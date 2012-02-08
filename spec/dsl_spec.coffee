@@ -2,20 +2,34 @@ describe "jasmine.features.dsl", ->
   Given -> jasmine.features.using(jQuery: $)
   
   #This let's us set up expectations of the dsl's expectations with didExpect()
-  Given -> @fakeMatchers = jasmine.createSpyObj('matchers',['toBeAttached','toEqual', 'toBe'])
-  Given -> @fakeExpect = jasmine.createSpy().andReturn(@fakeMatchers)
+  Given -> @fakeMatchers = jasmine.createSpyObj('expect()',['toBeAttached','toEqual', 'toBe'])
+  Given -> @fakeExpect = jasmine.createSpy("expect").andReturn(@fakeMatchers)
   didExpect=null
   Given ->
     didExpect = (actual) => 
       obj = {}
       expect(@fakeExpect).toHaveBeenCalled()
-      expect(@fakeExpect.mostRecentCall.args).toEqual(jasmine.util.argsToArray(arguments))
 
+      nodifyObj = (ar) ->
+        clone = _(ar).clone()
+        _(ar).each (v,k) ->
+          if v.jquery
+            clone[k] = v.toArray()
+        clone
+
+      ensureCalledWith = (spy,args) =>
+        expectedArgs = jasmine.util.argsToArray(args)
+        argsMatched = _(spy.calls).any (call) =>
+          jasmine.getEnv().equals_(nodifyObj(call.args),nodifyObj(expectedArgs))
+        @fail("expect() was not called with [#{expectedArgs}], but was called with #{_(spy.calls).pluck("args").join(" | ")}") unless argsMatched
+
+      ensureCalledWith(@fakeExpect,arguments)
+      
       _(@fakeMatchers).chain().functions().each (f) =>        
         obj[f] = =>
           fakeMatcher = @fakeMatchers[f]
           expect(fakeMatcher).toHaveBeenCalled()
-          expect(fakeMatcher.mostRecentCall.args).toEqual(jasmine.util.argsToArray(arguments))
+          ensureCalledWith(fakeMatcher,arguments)
       obj
 
   Given -> @subject = jasmine.features.addDsl($,@fakeExpect)
@@ -36,6 +50,7 @@ describe "jasmine.features.dsl", ->
     .Then( -> @captor.value instanceof $.Event)
     .Then( -> @captor.value.target == @$foo[0])
     .Then( -> @captor.value.type == 'click')
+    .Then( -> didExpect('#foo').toBeAttached())
 
   describe ".fillIn with:", ->
     Given -> @val = "some text"
@@ -48,6 +63,7 @@ describe "jasmine.features.dsl", ->
       .Then( -> @captor.value instanceof $.Event)
       .Then( -> @captor.value.target == @$foo[0])
       .Then( -> @captor.value.type == 'change')
+      .Then( -> didExpect(@$foo).toBeAttached() )
 
     describe "setting the value", ->
 
@@ -56,11 +72,13 @@ describe "jasmine.features.dsl", ->
           Given -> @$foo = affix('input[type="text"][name="foo"]')
           When -> @subject.fillIn('foo', with: @val)
           Then -> expect(@$foo.val()).toBe(@val)
+          Then -> didExpect(@val).toEqual(@val)
 
         context "by some other selector", ->
           Given -> @$foo = affix('input#foo[type="text"]')
           When -> @subject.fillIn('#foo', with: @val)
           Then -> expect(@$foo.val()).toBe(@val)
+          Then -> didExpect(@val).toEqual(@val)
 
       context "input[type=checkbox]", ->
         Given -> @val = true
@@ -82,26 +100,31 @@ describe "jasmine.features.dsl", ->
       Given -> @$foo = affix('input[type="checkbox"][name="foo"]')
       When -> @subject.check('foo')
       Then -> expect(@$foo.is(":checked")).toBe(true)
+      Then -> didExpect(true).toBe(true)
 
       context "~unchecking it with check", ->
         When -> @subject.check('foo',false)
         Then -> expect(@$foo.is(":checked")).toBe(false)
+        Then -> didExpect(false).toBe(false)
 
     context "by some other selector", ->
       Given -> @$foo = affix('input#foo[type="checkbox"]')
       When -> @subject.check('#foo')
       Then -> expect(@$foo.is(":checked")).toBe(true)
+      Then -> didExpect(true).toBe(true)
 
   describe ".uncheck", ->
     context "by name", ->
       Given -> @$foo = affix('input[type="checkbox"][name="foo"][checked="checked"]')
       When -> @subject.uncheck('foo')
       Then -> expect(@$foo.is(":checked")).toBe(false)
+      Then -> didExpect(false).toBe(false)
 
     context "by some other selector", ->
       Given -> @$foo = affix('input#foo[type="checkbox"]')
       When -> @subject.uncheck('#foo')
       Then -> expect(@$foo.is(":checked")).toBe(false)
+      Then -> didExpect(false).toBe(false)
 
   describe ".drag to:", ->
     Given -> $.fn.simulate = jasmine.createSpy()
@@ -166,5 +189,6 @@ describe "jasmine.features.dsl", ->
       When -> @subject.within '.bar', => 
         @result = @subject.findContent("Yay")
       Then -> @result == false 
+      Then -> didExpect(false).toBe(true)
 
     #context "does not exist on the page"
