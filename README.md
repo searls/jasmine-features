@@ -79,13 +79,33 @@ The `Feature` function is used in a way that's similar to Jasmine's `describe`. 
 
 jasmine-features adds a handful of methods that are similar to [Capybara](https://github.com/jnicklas/capybara)'s DSL. At present, they are:
 
-* **click** (*selector*) - clicks on whatever matches the selector
-* **fillIn** (*name or selector*, { with: *value*}) - fill in a form field. Currently works with text `input` fields, checkboxes, and `select` fields
-* **check** (*name or selector*) - check a checkbox matching the name or selector
-* **uncheck** (*name or selector*) - uncheck a checkbox matching the name or selector
-* **drag** (*selector*, { to: *selector*}) - drags an element at the provided selector to the provided "to" selector
-* **within** (*selector*, *function actions*) - limits the scope of the DSL actions in the provided function to that of the provided selector.
+##### Clicking stuff
+
+* **click** (*selector*) - clicks on a matching id or general jQuery selector
+* **clickLink** (*locator*) - clicks `<a>`; locates by ID, containing text, or a filtering selector
+* **clickButton** (*locator*) - clicks `<button>`, `<input type="button">`, and `<input type="submit">`; locating by ID, name, value, contained text
+
+##### Interacting with forms
+
+All form locators will locate fields by ID, name, label text, or jQuery selector (failing if none match)
+
+* **fillIn** (*locator*, { with: *value*}) - fill in a form field
+* **check** (*locator*) - check a checkbox
+* **uncheck** (*locator*) - uncheck a checkbox
+* **choose** (*locator*) - choose a radio button
+
+###### Querying/Finding
+
+* **find** (*selector*) - searches the page for the jQuery selector. Just like `$()`, except that it will respect whatever scope is set by `within`.
 * **findContent** (*text*) - searches the page (or `within` scope) for the provided text. Returns true or false and will fail the test if the text is not found.
+
+###### Scoping
+
+* **within** (*selector*, *function actions*) - limits the scope of the DSL actions in the provided function to that of the provided selector.
+
+###### Other
+
+* **drag** (*selector*, { to: *selector*}) - drags an element at the provided selector to the provided "to" selector
 
 Each of the provided DSL methods (unlike most jQuery interactions) are guarded by asserts as appropriate (for example, `fillIn` will first expect the input to exist, then expect the value was actually set after invoking `$.fn.val()`).
 
@@ -100,7 +120,7 @@ Here's an example of a bookmarklet one could use to run their features: `javascr
 
 #### Cucumber
 
-Similarly, the same test can be kicked off with Cucumber. This way, the tests you write with jasmine-features can easily be included as part of your project's continuous integration build and/or tested under a number of different application configurations. 
+Similarly, the same test can be kicked off with Cucumber. This way, the tests you write with jasmine-features can easily be included as part of your project's continuous integration build and/or tested under a number of different application configurations.
 
 Take for example, this feature file:
 
@@ -140,7 +160,7 @@ end
 
 ### Try it yourself
 
-This repo comes with an example configuration that you can run it yourself, including a Sinatra application, unit spec suite, and cucumber tests that invoke jasmine-features. 
+This repo comes with an example configuration that you can run it yourself, including a Sinatra application, unit spec suite, and cucumber tests that invoke jasmine-features.
 
 To try it out, just clone this repo, run `bundle install`, and run the server:
 
@@ -156,7 +176,7 @@ To run Cucumber (it's configured to use capybara-webkit, which requires the qt l
 bundle exec cucumber
 ```
 
-You could also run the entire build (if you have npm & coffee-script installed), which will run the specs, compile the source to `dist/`, and then run the cukes: 
+You could also run the entire build (if you have npm & coffee-script installed), which will run the specs, compile the source to `dist/`, and then run the cukes:
 
 ``` bash
 bundle exec rake

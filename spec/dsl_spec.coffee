@@ -262,10 +262,6 @@ describe "jasmine.features.dsl", ->
       Then -> expect(@winSpy).toHaveBeenCalled()
       Then -> expect(@failSpy).not.toHaveBeenCalled()
 
-
-
-
-
   describe ".drag to:", ->
     Given -> $.fn.simulate = jasmine.createSpy()
     Given -> @$from = affix('div.panda')
