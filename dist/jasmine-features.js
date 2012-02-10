@@ -20,25 +20,41 @@ site: https://github.com/searls/jasmine-features
     var dsl, find, o$;
     if (egspect == null) egspect = expect;
     o$ = $;
-    find = function(nameOrSelector, type) {
+    find = function(locator, type) {
       var $r;
       if (type == null) type = ":input";
-      $r = o$("" + type + "[name=" + nameOrSelector + "]");
-      if ($r.length === 0) $r = o$(nameOrSelector);
+      $r = o$("" + type + "[id=\"" + locator + "\"]");
+      if ($r.length === 0) $r = o$("" + type + "[name=\"" + locator + "\"]");
+      if ($r.length === 0) {
+        $r = o$("" + type + "[id=\"" + (o$("label:contains(\"" + locator + "\")").attr('for')) + "\"]");
+      }
+      if ($r.length === 0) $r = o$(locator);
+      egspect($r).toBeAttached();
       return $r;
     };
     dsl = {
-      within: function(selector, action) {
-        o$ = function(s) {
-          return $(s, selector);
-        };
-        o$.selector = selector;
-        action();
-        return o$ = $;
-      },
       click: function(selector) {
-        egspect(selector).toBeAttached();
-        return o$(selector).trigger('click');
+        var $clickable;
+        $clickable = o$("[id=\"" + selector + "\"]");
+        if ($clickable.length === 0) $clickable = o$(selector);
+        egspect($clickable).toBeAttached();
+        return $clickable.trigger('click');
+      },
+      clickLink: function(selector) {
+        var $link;
+        $link = o$("a[id=\"" + selector + "\"],a:contains(" + selector + ")");
+        if ($link.length === 0) $link = o$('a').filter(selector);
+        return dsl.click($link);
+      },
+      clickButton: function(selector) {
+        var $button;
+        $button = o$(_([":button", "input[type=\"submit\"]"]).map(function(elPrefix) {
+          return "" + elPrefix + "[id=\"" + selector + "\"]," + elPrefix + "[name=\"" + selector + "\"]," + elPrefix + "[value=\"" + selector + "\"]," + elPrefix + ":contains(" + selector + ")";
+        }).join(","));
+        if ($button.length === 0) {
+          $button = o$(':button,"input[type=\"submit\"]"').filter(selector);
+        }
+        return dsl.click($button);
       },
       fillIn: function(name, options) {
         var $input;
@@ -49,7 +65,7 @@ site: https://github.com/searls/jasmine-features
             return check(name, options["with"]);
           default:
             $input.val(options["with"]).trigger('change');
-            return egspect($input.val()).toEqual(options["with"]);
+            return egspect($input.val()).toBe(options["with"]);
         }
       },
       check: function(name, doCheckIt) {
@@ -62,6 +78,32 @@ site: https://github.com/searls/jasmine-features
       uncheck: function(name) {
         return dsl.check(name, false);
       },
+      choose: function(locator) {
+        var $radio;
+        $radio = find(locator, ":radio");
+        $radio.attr('checked', true).trigger('change');
+        return egspect($radio.is(':checked')).toBe(true);
+      },
+      findContent: function(text) {
+        var matches;
+        matches = $(o$.selector || 'body').text().indexOf(text) !== -1;
+        egspect(matches).toBe(true);
+        return matches;
+      },
+      find: function(selector) {
+        var $result;
+        $result = o$(selector);
+        egspect($result).toBeAttached();
+        return $result;
+      },
+      within: function(selector, action) {
+        o$ = function(s) {
+          return $(s, selector);
+        };
+        o$.selector = selector;
+        action();
+        return o$ = $;
+      },
       drag: function(selector, options) {
         var $from, $to;
         $from = o$(selector);
@@ -70,12 +112,6 @@ site: https://github.com/searls/jasmine-features
           dx: $to.offset().left - $from.offset().left,
           dy: $to.offset().top - $from.offset().top
         });
-      },
-      findContent: function(text) {
-        var matches;
-        matches = $(o$.selector || 'body').text().indexOf(text) !== -1;
-        egspect(matches).toBe(true);
-        return matches;
       }
     };
     _(window).extend(dsl);
