@@ -39,7 +39,7 @@ jasmine.features.addDsl = ($, egspect=expect) ->
           check(name,options.with)
         else
           $input.val(options.with).trigger('change')
-          egspect($input.val()).toEqual(options.with)
+          egspect($input.val()).toBe(options.with)
     check: (name, doCheckIt = true) ->
       $checkbox = find(name,":checkbox")
       $checkbox.attr('checked',doCheckIt).trigger('change')

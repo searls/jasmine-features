@@ -113,12 +113,14 @@ describe "jasmine.features.dsl", ->
 
   describe "Interacting with forms", ->
     behavesLikeFormField = (config) ->
+      andArgs = (x) -> _(x).union(config.args)
+
       describe ".#{config.method}", ->
         Given -> @$field = affix(config.selector).on('change',@handler = jasmine.createSpy())
 
         describe "the $.event handler", ->
           Given -> @captor = jasmine.captor()
-          When -> @subject[config.method](config.selector)
+          When -> @subject[config.method].apply(@,andArgs(config.selector))
           Then( -> expect(@handler).toHaveBeenCalledWith(@captor.capture()))
           .Then( -> @captor.value instanceof $.Event)
           .Then( -> @captor.value.target == @$field[0])
@@ -126,7 +128,7 @@ describe "jasmine.features.dsl", ->
 
         context "choosing by id", ->
           Given -> @$field.attr('id','foo')
-          When -> @subject[config.method]('foo')
+          When -> @subject[config.method].apply(@,andArgs('foo'))
           Then -> didExpect(@$field).toBeAttached()
           Then -> config.setTest(@$field) == true
           Then -> didExpect(config.valueFor(@$field)).toBe(config.value)
@@ -134,30 +136,30 @@ describe "jasmine.features.dsl", ->
         context "choosing by label", ->
           Given -> @$field.attr('id','foo')
           Given -> affix('label[for="foo"]').text("Some label")
-          When -> @subject[config.method]('Some label')
+          When -> @subject[config.method].apply(@,andArgs('Some label'))
           Then -> didExpect(@$field).toBeAttached()
           Then -> config.setTest(@$field) == true
 
         context "no match", ->
-          When -> @subject[config.method]('Some label')
+          When -> @subject[config.method].apply(@,andArgs('Some label'))
           Then -> didExpect([]).toBeAttached()
           Then -> config.setTest(@$field) == false
 
         context "choosing by name", ->
           Given -> @$field.attr('name','pants')
-          When -> @subject[config.method]('pants')
+          When -> @subject[config.method].apply(@,andArgs('pants'))
           Then -> didExpect(@$field).toBeAttached()
           Then -> config.setTest(@$field) == true
 
         context "choosing by a normal selector", ->
           Given -> @$field.attr('name','pants')
-          When -> @subject[config.method](':input[name="pants"]')
+          When -> @subject[config.method].apply(@,andArgs(':input[name="pants"]'))
           Then -> didExpect(@$field).toBeAttached()
           Then -> config.setTest(@$field) == true
 
         context "a matching non-field", ->
-          Given -> @$field = affix(config.selector.replace(/\[type=\"[^\]]*\"\]/,"[type=\"foomail\"]")).attr('name','pants')
-          When -> @subject[config.method]('pants')
+          Given -> @$field = affix(config.selector.replace('input','span').replace(/\[type=\"[^\]]*\"\]/,"[type=\"foomail\"]")).attr('name','pants')
+          When -> @subject[config.method].apply(@,andArgs('pants'))
           Then -> didExpect([]).toBeAttached()
           Then -> config.setTest(@$field) == false
 
@@ -182,13 +184,13 @@ describe "jasmine.features.dsl", ->
             Given -> @$foo = affix('input[type="text"][name="foo"]')
             When -> @subject.fillIn('foo', with: @val)
             Then -> expect(@$foo.val()).toBe(@val)
-            Then -> didExpect(@val).toEqual(@val)
+            Then -> didExpect(@val).toBe(@val)
 
           context "by some other selector", ->
             Given -> @$foo = affix('input#foo[type="text"]')
             When -> @subject.fillIn('#foo', with: @val)
             Then -> expect(@$foo.val()).toBe(@val)
-            Then -> didExpect(@val).toEqual(@val)
+            Then -> didExpect(@val).toBe(@val)
 
         context "input[type=checkbox]", ->
           Given -> @val = true
@@ -206,23 +208,35 @@ describe "jasmine.features.dsl", ->
     behavesLikeFormField
       method: "check"
       selector: "input[type=\"checkbox\"]"
+      args: []
       value: true
-      setTest: (($field) -> $field.is(":checked"))
-      valueFor: (($field) -> $field.is(":checked"))
+      setTest: ($field) -> $field.is(":checked")
+      valueFor: ($field) -> $field.is(":checked")
 
     behavesLikeFormField
       method: "uncheck"
       selector: "input[type=\"checkbox\"][checked=\"checked\"]"
+      args: []
       value: false
-      setTest: (($field) -> $field.attr("checked") != "checked" )
-      valueFor: (($field) -> $field.is(":checked"))
+      setTest: ($field) -> $field.attr("checked") != "checked"
+      valueFor: ($field) -> $field.is(":checked")
 
     behavesLikeFormField
-      method: "choose",
-      selector: "input[type=\"radio\"]",
-      value: true,
-      setTest: (($field) -> $field.is(":checked")),
-      valueFor: (($field) -> $field.is(":checked"))
+      method: "choose"
+      selector: "input[type=\"radio\"]"
+      args: []
+      value: true
+      setTest: ($field) -> $field.is(":checked")
+      valueFor: ($field) -> $field.is(":checked")
+
+    behavesLikeFormField
+      method: "fillIn"
+      args: [{with: "My Text"}]
+      selector: "input[type=\"text\"]"
+      value: "My Text"
+      setTest: ($field) -> $field.val() == "My Text"
+      valueFor: ($field) -> $field.val()
+
 
   describe "Querying", ->
     describe ".findContent", ->
