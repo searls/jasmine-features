@@ -36,19 +36,33 @@ describe "jasmine.features.dsl", ->
 
   describe "Clicking links and buttons", ->
     describe ".click", ->
-      Given -> @captor = jasmine.captor()
-      Given -> @$foo = affix('#foo').on('click',@handler = jasmine.createSpy())
-      When -> @subject.click('#foo')
-      Then( -> expect(@handler).toHaveBeenCalledWith(@captor.capture()))
-      .Then( -> @captor.value instanceof $.Event)
-      .Then( -> @captor.value.target == @$foo[0])
-      .Then( -> @captor.value.type == 'click')
-      .Then( -> didExpect(@$foo).toBeAttached())
+
+      context "by ID", ->
+        Given -> @$link = affix("#link").on('click',@handler = jasmine.createSpy())
+        When -> @subject.click("link")
+        Then -> didExpect(@$link).toBeAttached()
+        Then -> expect(@handler).toHaveBeenCalled()
+
+      xcontext "by Content -- TODO: how to select the closest ancestor containing?", ->
+        Given -> @$link = affix("div").text("Hello There!").on('click',@handler = jasmine.createSpy())
+        When -> @subject.click("Hello There")
+        Then -> didExpect(@$link).toBeAttached()
+        Then -> expect(@handler).toHaveBeenCalled()
+
+      context "arbitrary selector", ->
+        Given -> @captor = jasmine.captor()
+        Given -> @$foo = affix('#foo').on('click',@handler = jasmine.createSpy())
+        When -> @subject.click('#foo')
+        Then( -> expect(@handler).toHaveBeenCalledWith(@captor.capture()))
+        .Then( -> @captor.value instanceof $.Event)
+        .Then( -> @captor.value.target == @$foo[0])
+        .Then( -> @captor.value.type == 'click')
+        .Then( -> didExpect(@$foo).toBeAttached())
 
     describe ".clickLink", ->
       context "by id", ->
         Given -> @$link = affix("a#link").on('click',@handler = jasmine.createSpy())
-        When -> clickLink("link")
+        When -> @subject.clickLink("link")
         Then -> didExpect(@$link).toBeAttached()
         Then -> expect(@handler).toHaveBeenCalled()
 
@@ -163,48 +177,6 @@ describe "jasmine.features.dsl", ->
           Then -> didExpect([]).toBeAttached()
           Then -> config.setTest(@$field) == false
 
-
-    describe ".fillIn with:", ->
-      Given -> @val = "some text"
-
-      describe "the $.event handler", ->
-        Given -> @captor = jasmine.captor()
-        Given -> @$foo = affix('input[type="text"][name="foo"]').on('change',@handler = jasmine.createSpy())
-        When -> @subject.fillIn('foo', with: @val)
-        Then( -> expect(@handler).toHaveBeenCalledWith(@captor.capture()))
-        .Then( -> @captor.value instanceof $.Event)
-        .Then( -> @captor.value.target == @$foo[0])
-        .Then( -> @captor.value.type == 'change')
-        .Then( -> didExpect(@$foo).toBeAttached() )
-
-      describe "setting the value", ->
-
-        context "input[type=text]", ->
-          context "by name", ->
-            Given -> @$foo = affix('input[type="text"][name="foo"]')
-            When -> @subject.fillIn('foo', with: @val)
-            Then -> expect(@$foo.val()).toBe(@val)
-            Then -> didExpect(@val).toBe(@val)
-
-          context "by some other selector", ->
-            Given -> @$foo = affix('input#foo[type="text"]')
-            When -> @subject.fillIn('#foo', with: @val)
-            Then -> expect(@$foo.val()).toBe(@val)
-            Then -> didExpect(@val).toBe(@val)
-
-        context "input[type=checkbox]", ->
-          Given -> @val = true
-
-          context "by name", ->
-            Given -> @$foo = affix('input[type="checkbox"][name="foo"]')
-            When -> @subject.fillIn('foo', with: @val)
-            Then -> expect(@$foo.is(":checked")).toBe(true)
-
-          context "by some other selector", ->
-            Given -> @$foo = affix('input#foo[type="checkbox"]')
-            When -> @subject.fillIn('#foo', with: @val)
-            Then -> expect(@$foo.is(":checked")).toBe(true)
-
     behavesLikeFormField
       method: "check"
       selector: "input[type=\"checkbox\"]"
@@ -240,7 +212,6 @@ describe "jasmine.features.dsl", ->
 
   describe "Querying", ->
     describe ".findContent", ->
-
       context "exists on the page", ->
         Given -> affix('div').text("Yay")
         When -> @result = @subject.findContent("Yay")
@@ -261,6 +232,26 @@ describe "jasmine.features.dsl", ->
         Then -> didExpect(false).toBe(true)
 
   describe "Finding", ->
+    describe ".find", ->
+      context "exists", ->
+        Given -> @$foo = affix('.foo')
+        When -> @$result = @subject.find('.foo')
+        Then -> @$foo[0] == @$result[0]
+        Then -> didExpect(@$foo).toBeAttached()
+
+      context "does not exist", ->
+        When -> @$result = @subject.find('.foo')
+        Then -> @$result.length == 0
+        Then -> didExpect([]).toBeAttached()
+
+      context "exists out of scope", ->
+        Given -> @$foo = affix('.foo')
+        Given -> @$bar = affix('.bar')
+        When ->
+          @subject.within '.bar', =>
+            @$result = @subject.find('.foo')
+        Then -> @$result.length == 0
+        Then -> didExpect([]).toBeAttached()
 
   describe "Scoping", ->
     describe ".within", ->

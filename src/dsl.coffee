@@ -14,7 +14,8 @@ jasmine.features.addDsl = ($, egspect=expect) ->
   dsl =
     #clicking
     click: (selector) ->
-      $clickable = o$(selector)
+      $clickable = o$("[id=\"#{selector}\"]")
+      $clickable = o$(selector) if $clickable.length == 0
       egspect($clickable).toBeAttached()
       $clickable.trigger('click')
 
@@ -56,6 +57,11 @@ jasmine.features.addDsl = ($, egspect=expect) ->
       matches = $(o$.selector or 'body').text().indexOf(text) != -1
       egspect(matches).toBe(true)
       matches
+
+    find: (selector) ->
+      $result = o$(selector)
+      egspect($result).toBeAttached()
+      $result
 
     #scoping
     within: (selector, action) ->
